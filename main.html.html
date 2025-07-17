@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Power - Kegel Trainer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .bg-apex-dark { background-color: #121212; }
+        .bg-apex-charcoal { background-color: #1E1E1E; }
+        .bg-apex-medium { background-color: #2A2A2A; }
+        .text-apex-light { color: #E0E0E0; }
+        .text-apex-medium { color: #A0A0A0; }
+        
+        .btn-icon {
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 9999px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-icon:hover { background-color: rgba(255,255,255,0.2); }
+        .hidden { display: none; }
+
+        #progress-ring {
+            transition: stroke 0.5s ease-in-out;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            pointer-events: none;
+        }
+        .modal-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            background-color: #1E1E1E;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.95);
+            transition: transform 0.3s ease-in-out;
+        }
+        .modal-overlay.visible .modal-content {
+            transform: scale(1);
+        }
+        .tick-mark {
+            width: 10px;
+            height: 10px;
+            border: 2px solid #4B5563; /* gray-600 */
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+        .tick-mark.completed {
+            background-color: #34D399; /* green-400 */
+            border-color: #34D399;
+        }
+        /* Neon Progress Bar Style */
+        #rep-progress-bar-container {
+            background-color: #2A2A2A;
+            border-radius: 9999px;
+            padding: 3px;
+        }
+        #rep-progress-bar {
+            background: linear-gradient(90deg, #d946ef, #34d399);
+            box-shadow: 0 0 3px #fff, 0 0 5px #d946ef, 0 0 10px #34d399;
+            border-radius: 9999px;
+            height: 100%;
+            transition: width 0.1s linear; /* Use linear transition for smoothness */
+        }
+    </style>
+</head>
+<body class="bg-apex-dark text-apex-light antialiased">
+
+    <div id="app" class="max-w-md mx-auto min-h-screen flex flex-col">
+
+        <!-- Onboarding Screen -->
+        <div id="onboarding-screen" class="flex flex-col justify-center items-center text-center p-8 flex-grow">
+            <h1 class="text-4xl font-bold mb-4">Apex Power</h1>
+            <p class="text-apex-medium mb-8">Level up your performance with science-backed pelvic floor training.</p>
+            <div id="onboarding-step-1" class="">
+                <h2 class="text-2xl font-semibold mb-2">Step 1: Find Your Muscles</h2>
+                <button onclick="showStep(2)" class="bg-pink-600 text-white font-bold py-3 px-8 rounded-full w-full mt-8">Next</button>
+            </div>
+            <div id="onboarding-step-2" class="hidden">
+                <h2 class="text-2xl font-semibold mb-2">Step 2: The 'Squeeze & Lift'</h2>
+                <button onclick="showStep(3)" class="bg-pink-600 text-white font-bold py-3 px-8 rounded-full w-full mt-8">Next</button>
+            </div>
+            <div id="onboarding-step-3" class="hidden">
+                <h2 class="text-2xl font-semibold mb-2">Step 3: Visual Check</h2>
+                <button onclick="completeOnboarding()" class="bg-green-500 text-white font-bold py-3 px-8 rounded-full w-full mt-8">Start Training</button>
+            </div>
+        </div>
+
+        <!-- Weekly View Screen -->
+        <div id="weekly-view-screen" class="hidden flex-grow flex flex-col p-4">
+            <div class="flex justify-between items-center p-4">
+                <h2 id="weekly-view-title" class="text-2xl font-bold">Level 1</h2>
+                <button onclick="showMainScreen(true)" class="text-pink-500 font-semibold">All Levels</button>
+            </div>
+            <div id="daily-list" class="space-y-3 p-4">
+                <!-- Daily progress will be populated here -->
+            </div>
+        </div>
+
+        <!-- Main Training Screen -->
+        <div id="training-screen" class="hidden flex-grow flex flex-col p-4">
+            <div class="flex justify-between items-center p-4">
+                <div class="text-left">
+                    <h2 id="level-title" class="text-lg font-bold">Level 1: Foundation</h2>
+                    <p id="level-goal" class="text-sm text-apex-medium">Foundational Control</p>
+                </div>
+                <div id="set-info" class="text-lg font-mono">Set 1</div>
+            </div>
+            
+            <div class="px-4 mb-6">
+                <div id="rep-progress-bar-container" class="w-full rounded-full h-3">
+                    <div id="rep-progress-bar" class="h-full" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="flex-grow flex flex-col items-center justify-center">
+                <div class="relative w-64 h-64">
+                    <svg class="absolute top-0 left-0 w-full h-full" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="45" class="text-apex-medium" stroke-width="8" fill="transparent" stroke="currentColor" opacity="0.2"></circle>
+                        <circle id="progress-ring" cx="50" cy="50" r="45" class="text-blue-500" stroke-width="8" fill="transparent" stroke="currentColor" stroke-linecap="round"></circle>
+                    </svg>
+                    <div class="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+                        <div class="text-center">
+                            <p id="countdown-timer" class="text-7xl font-bold">3</p>
+                            <p id="countdown-unit" class="text-xl text-apex-medium">Sec</p>
+                        </div>
+                    </div>
+                </div>
+                <p id="action-prompt" class="text-2xl font-bold mt-8 tracking-widest"></p>
+            </div>
+
+            <div class="p-4 text-center">
+                <p id="rep-counter" class="text-lg font-semibold">Reps: 0 / 5</p>
+            </div>
+
+            <div class="flex justify-around items-center p-4 bg-apex-charcoal rounded-full">
+                <button id="sound-toggle" class="btn-icon">
+                    <svg id="sound-on-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+                    <svg id="sound-off-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l4-4m0 4l-4-4"></path></svg>
+                </button>
+                <button id="pause-play-btn" class="btn-icon w-16 h-16 bg-pink-600">
+                    <svg id="play-icon" class="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path></svg>
+                    <svg id="pause-icon" class="w-8 h-8 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M5.75 4.75a.75.75 0 00-1.5 0v10.5a.75.75 0 001.5 0V4.75zm8.5 0a.75.75 0 00-1.5 0v10.5a.75.75 0 001.5 0V4.75z"></path></svg>
+                </button>
+                <button onclick="showMainScreen(true)" class="btn-icon">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Level Select Modal -->
+    <div id="level-select-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Select Level</h2>
+                <button onclick="toggleLevelSelectModal(false)" class="text-2xl">&times;</button>
+            </div>
+            <div id="level-list" class="space-y-2"></div>
+        </div>
+    </div>
+
+    <script>
+        let audioCtx;
+        function playDing() {
+            if (!state.soundEnabled) return;
+            if (!audioCtx) {
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) { console.error("Web Audio API is not supported"); return; }
+            }
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.5);
+        }
+
+        const DOM = {
+            onboardingScreen: document.getElementById('onboarding-screen'),
+            weeklyViewScreen: document.getElementById('weekly-view-screen'),
+            trainingScreen: document.getElementById('training-screen'),
+            weeklyViewTitle: document.getElementById('weekly-view-title'),
+            dailyList: document.getElementById('daily-list'),
+            levelTitle: document.getElementById('level-title'),
+            levelGoal: document.getElementById('level-goal'),
+            setInfo: document.getElementById('set-info'),
+            progressRing: document.getElementById('progress-ring'),
+            countdownTimer: document.getElementById('countdown-timer'),
+            actionPrompt: document.getElementById('action-prompt'),
+            repCounter: document.getElementById('rep-counter'),
+            repProgressBar: document.getElementById('rep-progress-bar'),
+            pausePlayBtn: document.getElementById('pause-play-btn'),
+            playIcon: document.getElementById('play-icon'),
+            pauseIcon: document.getElementById('pause-icon'),
+            soundToggle: document.getElementById('sound-toggle'),
+            soundOnIcon: document.getElementById('sound-on-icon'),
+            soundOffIcon: document.getElementById('sound-off-icon'),
+            levelSelectModal: document.getElementById('level-select-modal'),
+            levelList: document.getElementById('level-list'),
+        };
+
+        const ringRadius = 45;
+        const ringCircumference = 2 * Math.PI * ringRadius;
+        DOM.progressRing.style.strokeDasharray = `${ringCircumference} ${ringCircumference}`;
+
+        const trainingPlan = [
+            // Data mapped from research file
+            { level: 1, goal: "Activation & Control", hold: 3, rest: 5, reps: 5, sets: 3 },
+            { level: 2, goal: "Building Endurance", hold: 5, rest: 5, reps: 8, sets: 3 },
+            { level: 3, goal: "Increasing Volume", hold: 5, rest: 5, reps: 10, sets: 3 },
+            { level: 4, goal: "Strengthening Hold", hold: 8, rest: 8, reps: 10, sets: 3 },
+            { level: 5, goal: "The 10-Second Goal", hold: 10, rest: 10, reps: 10, sets: 3 },
+            { level: 6, goal: "Mastering Positions", hold: 10, rest: 10, reps: 12, sets: 3 },
+            { level: 7, goal: "Advanced Contractions", hold: 10, rest: 10, reps: 15, sets: 3 },
+            { level: 8, goal: "Peak Strength", hold: 10, rest: 10, reps: 15, sets: 3 },
+            { level: 9, goal: "Power & Stamina", hold: 10, rest: 10, reps: 15, sets: 3 },
+            { level: 10, goal: "Functional Integration", hold: 10, rest: 10, reps: 10, sets: 2 },
+            { level: 11, goal: "Mastery & Control", hold: 10, rest: 10, reps: 10, sets: 2 },
+            { level: 12, goal: "Lifetime Maintenance", hold: 10, rest: 10, reps: 15, sets: 3 }
+        ];
+
+        let state = {};
+        let transientState = {};
+
+        const storageKey = 'apexPowerGameState_v3';
+
+        function initializeState() {
+            state = {
+                onboardingComplete: false,
+                soundEnabled: true,
+                progress: trainingPlan.map(level => ({
+                    days: Array(7).fill(null).map(() => ({
+                        sets: Array(level.sets).fill(false)
+                    }))
+                }))
+            };
+            transientState = {
+                currentScreen: 'onboarding',
+                levelIndex: 0,
+                dayIndex: 0,
+                setIndex: 0,
+                currentRep: 0,
+                isPaused: true,
+                isSqueezing: false,
+                animationFrameId: null,
+                phaseStartTime: 0,
+                phaseDuration: 0,
+                pausedTime: 0,
+                setStartTime: 0,
+                totalPausedDuration: 0,
+            };
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem(storageKey, JSON.stringify(state));
+            } catch (e) { console.error("Could not save state", e); }
+        }
+
+        function loadState() {
+            try {
+                const savedState = localStorage.getItem(storageKey);
+                if (savedState) {
+                    const loaded = JSON.parse(savedState);
+                    state.onboardingComplete = loaded.onboardingComplete ?? false;
+                    state.soundEnabled = loaded.soundEnabled ?? true;
+                    if(loaded.progress && loaded.progress.length === trainingPlan.length) {
+                        state.progress = loaded.progress;
+                    }
+                }
+            } catch (e) { console.error("Could not load state", e); }
+        }
+
+        function showStep(step) {
+            ['1', '2', '3'].forEach(s => document.getElementById(`onboarding-step-${s}`).classList.add('hidden'));
+            document.getElementById(`onboarding-step-${step}`).classList.remove('hidden');
+        }
+
+        function completeOnboarding() {
+            state.onboardingComplete = true;
+            saveState();
+            startSet(0, 0); // Directly start Level 1, Day 1, Set 1
+        }
+
+        function showMainScreen(openModal = false) {
+            DOM.onboardingScreen.classList.add('hidden');
+            DOM.trainingScreen.classList.add('hidden');
+            DOM.weeklyViewScreen.classList.remove('hidden');
+            transientState.currentScreen = 'weekly';
+            
+            const { levelIndex } = findFirstUnfinishedDay();
+            populateWeeklyView(levelIndex);
+            if (openModal) {
+                toggleLevelSelectModal(true);
+            }
+        }
+
+        function populateWeeklyView(levelIndex) {
+            transientState.levelIndex = levelIndex;
+            const levelData = trainingPlan[levelIndex];
+            const levelProgress = state.progress[levelIndex];
+            DOM.weeklyViewTitle.textContent = `Level ${levelData.level}`;
+            DOM.dailyList.innerHTML = '';
+
+            levelProgress.days.forEach((day, dayIndex) => {
+                const dayItem = document.createElement('button');
+                const isUnlocked = dayIndex === 0 || (dayIndex > 0 && levelProgress.days[dayIndex - 1].sets.every(s => s));
+                
+                dayItem.className = `w-full text-left p-4 rounded-lg flex items-center justify-between transition-colors ${isUnlocked ? 'bg-apex-medium hover:bg-apex-charcoal cursor-pointer' : 'bg-apex-medium opacity-50 cursor-not-allowed'}`;
+                dayItem.disabled = !isUnlocked;
+
+                let ticksHTML = '';
+                day.sets.forEach(isCompleted => {
+                    ticksHTML += `<div class="tick-mark ${isCompleted ? 'completed' : ''}"></div>`;
+                });
+
+                dayItem.innerHTML = `
+                    <p class="font-bold text-lg">Day ${dayIndex + 1}</p>
+                    <div class="flex items-center space-x-2">${ticksHTML}</div>
+                `;
+                
+                if (isUnlocked) {
+                    dayItem.onclick = () => startSet(levelIndex, dayIndex);
+                }
+                DOM.dailyList.appendChild(dayItem);
+            });
+        }
+        
+        function startSet(levelIndex, dayIndex) {
+            const setIndex = state.progress[levelIndex].days[dayIndex].sets.findIndex(s => !s);
+            if (setIndex === -1) { return; }
+
+            transientState = {
+                ...transientState,
+                levelIndex,
+                dayIndex,
+                setIndex,
+                isPaused: true,
+                currentRep: 0,
+                setStartTime: 0,
+                totalPausedDuration: 0,
+            };
+
+            DOM.onboardingScreen.classList.add('hidden');
+            DOM.weeklyViewScreen.classList.add('hidden');
+            DOM.trainingScreen.classList.remove('hidden');
+            transientState.currentScreen = 'training';
+
+            const levelData = trainingPlan[levelIndex];
+            DOM.levelTitle.textContent = `Level ${levelData.level}`;
+            DOM.levelGoal.textContent = levelData.goal;
+            DOM.setInfo.textContent = `Set ${setIndex + 1}`;
+            DOM.repCounter.textContent = `Reps: 0 / ${levelData.reps}`;
+            DOM.actionPrompt.textContent = "PRESS PLAY TO BEGIN";
+            DOM.countdownTimer.textContent = levelData.hold;
+            DOM.repProgressBar.style.width = '0%';
+            setRingProgress(0, 'green');
+            DOM.playIcon.classList.remove('hidden');
+            DOM.pauseIcon.classList.add('hidden');
+        }
+
+        function endSet() {
+            state.progress[transientState.levelIndex].days[transientState.dayIndex].sets[transientState.setIndex] = true;
+            saveState();
+            
+            DOM.trainingScreen.classList.add('hidden');
+            DOM.weeklyViewScreen.classList.remove('hidden');
+            transientState.currentScreen = 'weekly';
+            populateWeeklyView(transientState.levelIndex);
+        }
+
+        function togglePausePlay() {
+            transientState.isPaused = !transientState.isPaused;
+            if (transientState.isPaused) {
+                cancelAnimationFrame(transientState.animationFrameId);
+                transientState.pausedTime = performance.now();
+                DOM.playIcon.classList.remove('hidden');
+                DOM.pauseIcon.classList.add('hidden');
+                DOM.actionPrompt.textContent = "PAUSED";
+            } else {
+                DOM.playIcon.classList.add('hidden');
+                DOM.pauseIcon.classList.remove('hidden');
+                
+                if (transientState.setStartTime === 0) {
+                    transientState.setStartTime = performance.now();
+                } else if (transientState.pausedTime > 0) {
+                    transientState.totalPausedDuration += (performance.now() - transientState.pausedTime);
+                }
+                
+                if (transientState.currentRep === 0) {
+                    startRep();
+                    return;
+                }
+                transientState.animationFrameId = requestAnimationFrame(animationLoop);
+            }
+        }
+
+        function startPhase(duration, isSqueeze, prompt) {
+            transientState.phaseDuration = duration * 1000;
+            transientState.phaseStartTime = performance.now();
+            transientState.pausedTime = 0;
+            transientState.isSqueezing = isSqueeze;
+            DOM.actionPrompt.textContent = prompt;
+            
+            if (!transientState.isPaused) {
+                transientState.animationFrameId = requestAnimationFrame(animationLoop);
+            }
+        }
+
+        function animationLoop(timestamp) {
+            // Phase progress (for ring)
+            const phaseElapsedTime = timestamp - transientState.phaseStartTime;
+            const phaseProgress = Math.min(phaseElapsedTime / transientState.phaseDuration, 1);
+            const remainingSeconds = Math.ceil((transientState.phaseDuration - phaseElapsedTime) / 1000);
+            DOM.countdownTimer.textContent = remainingSeconds > 0 ? remainingSeconds : 0;
+            setRingProgress(phaseProgress, transientState.isSqueezing ? 'green' : 'pink');
+
+            // Overall set progress (for top bar)
+            const levelData = trainingPlan[transientState.levelIndex];
+            const totalSetDurationMs = levelData.reps * (levelData.hold + levelData.rest) * 1000;
+            if (transientState.setStartTime > 0) {
+                const effectiveElapsedTime = (timestamp - transientState.setStartTime) - transientState.totalPausedDuration;
+                const setProgressPercent = Math.min((effectiveElapsedTime / totalSetDurationMs) * 100, 100);
+                DOM.repProgressBar.style.width = `${setProgressPercent}%`;
+            }
+
+            if (phaseProgress >= 1) {
+                moveToNextPhase();
+            } else {
+                transientState.animationFrameId = requestAnimationFrame(animationLoop);
+            }
+        }
+
+        function moveToNextPhase() {
+            if (transientState.isSqueezing) startRest();
+            else startRep();
+        }
+        
+        function startRep() {
+            const levelData = trainingPlan[transientState.levelIndex];
+            if (transientState.currentRep >= levelData.reps) {
+                endSet();
+                return;
+            }
+            transientState.currentRep++;
+            DOM.repCounter.textContent = `Reps: ${transientState.currentRep} / ${levelData.reps}`;
+            playDing();
+            startPhase(levelData.hold, true, "SQUEEZE & HOLD");
+        }
+        
+        function startRest() {
+            const levelData = trainingPlan[transientState.levelIndex];
+            playDing();
+            startPhase(levelData.rest, false, "RELEASE & RELAX");
+        }
+
+        function setRingProgress(progress, color) {
+            const offset = ringCircumference * (1 - progress);
+            DOM.progressRing.style.strokeDashoffset = offset;
+            
+            if (color === 'green') {
+                DOM.progressRing.style.stroke = 'rgb(52, 211, 153)'; // green-400
+            } else { // pink
+                DOM.progressRing.style.stroke = 'rgb(236, 72, 153)'; // pink-500
+            }
+        }
+        
+        function toggleLevelSelectModal(show) {
+            if (show) {
+                populateLevelSelector();
+                DOM.levelSelectModal.classList.add('visible');
+            } else {
+                DOM.levelSelectModal.classList.remove('visible');
+            }
+        }
+
+        function populateLevelSelector() {
+            DOM.levelList.innerHTML = '';
+            trainingPlan.forEach((level, index) => {
+                const isLevelCompleted = state.progress[index].days.every(d => d.sets.every(s => s));
+                
+                const levelItem = document.createElement('button');
+                levelItem.className = `w-full text-left p-4 rounded-lg flex items-center justify-between transition-colors bg-apex-medium hover:bg-apex-charcoal cursor-pointer`;
+                levelItem.disabled = false;
+                
+                levelItem.innerHTML = `
+                    <div>
+                        <p class="font-bold text-lg">Level ${level.level}</p>
+                        <p class="text-sm text-apex-medium">${level.goal}</p>
+                    </div>
+                    <svg class="w-6 h-6 ${isLevelCompleted ? 'text-yellow-400' : 'text-gray-600'}" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                    </svg>
+                `;
+                
+                levelItem.onclick = () => {
+                    toggleLevelSelectModal(false);
+                    populateWeeklyView(index);
+                };
+                DOM.levelList.appendChild(levelItem);
+            });
+        }
+        
+        function findFirstUnfinishedDay() {
+            for (let levelIndex = 0; levelIndex < state.progress.length; levelIndex++) {
+                const levelProgress = state.progress[levelIndex];
+                for (let dayIndex = 0; dayIndex < levelProgress.days.length; dayIndex++) {
+                    if (!levelProgress.days[dayIndex].sets.every(s => s)) {
+                        return { levelIndex, dayIndex };
+                    }
+                }
+            }
+            return { levelIndex: trainingPlan.length - 1, dayIndex: 6 }; // All complete
+        }
+
+        DOM.soundToggle.addEventListener('click', () => {
+            state.soundEnabled = !state.soundEnabled;
+            DOM.soundOnIcon.classList.toggle('hidden', !state.soundEnabled);
+            DOM.soundOffIcon.classList.toggle('hidden', state.soundEnabled);
+            DOM.soundToggle.classList.toggle('bg-green-500', state.soundEnabled);
+            saveState();
+        });
+        DOM.pausePlayBtn.addEventListener('click', togglePausePlay);
+
+        window.onload = () => {
+            initializeState();
+            loadState();
+            DOM.soundToggle.classList.toggle('bg-green-500', state.soundEnabled);
+            DOM.soundOnIcon.classList.toggle('hidden', !state.soundEnabled);
+            DOM.soundOffIcon.classList.toggle('hidden', state.soundEnabled);
+
+            if (state.onboardingComplete) {
+                showMainScreen();
+            } else {
+                DOM.onboardingScreen.classList.remove('hidden');
+            }
+        };
+    </script>
+</body>
+</html>
