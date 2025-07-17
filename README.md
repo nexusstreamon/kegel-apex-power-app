@@ -41,7 +41,7 @@ If you'd like to contribute to this project, kindly make onboarding pages and ap
 
 ## License
 
-This project is licensed under the [GNU GPLv3] (https://choosealicense.com/licenses/gpl-3.0/) file for details. 
+This project is licensed under the [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/) file for details. 
 
 ## Acknowledgements
 
