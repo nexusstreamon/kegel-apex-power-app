@@ -3,7 +3,7 @@
 ## Overview
 
 This is a fun and engaging game application designed to help users strengthen their pelvic floor muscles through a structured 12-week Kegel exercise program. The app incorporates a timer and game elements to make consistent training more enjoyable and trackable.
-Its a simple application that stores the information in ~localstorage of modern browsers. The app intervals are scientifically researched and the data of the research can be downloaded and viewed in excel sheet format included in the research section of the repository.
+Its a simple application that stores the information in ~localstorage of modern browsers. The app intervals are scientifically researched and the data of the research can be downloaded and viewed in excel sheet format included in the repository.
 
 ## How to Use. 
 Navigation Flow:
