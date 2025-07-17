@@ -6,15 +6,14 @@ This is a fun and engaging game application designed to help users strengthen th
 Its a simple application that stores the information in ~localstorage of modern browsers. The app intervals are scientifically researched and the data of the research can be downloaded and viewed in excel sheet format included in the research section of the repository.
 
 ## How to Use. 
-Kegel exercise are very easy to begin with Just Squeeze and relax. Please watch some videos online for how to search for pelvic muscles. 
-Please Note - Kegel exercise are not for everyone. Kindly refer to your doctors advice before starting the program. 
+Navigation Flow:
+After the onboarding. You are presented with the app interface. 
 
+Clicking the Star button takes you to the new "All Levels" screen.
+Clicking a level (e.g., "Level 1") on this screen takes you to the "Daily Progress" screen for that level.
 The interface is pretty simple and intuitive. 
 
-After the onboarding. You are presented with the app interface. 
-Only thing you need to click is 
-**Start/Pause Button** in the middle. 
-**STAR Button** on the Bottom Right. Click on it to **Access Any Game Level**. 
+
 
 ## Key Features
 
