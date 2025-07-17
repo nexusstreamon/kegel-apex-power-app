@@ -36,40 +36,6 @@
             transform: rotate(-90deg);
             transform-origin: 50% 50%;
         }
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0,0,0,0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 50;
-            backdrop-filter: blur(5px);
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-            pointer-events: none;
-        }
-        .modal-overlay.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .modal-content {
-            background-color: #1E1E1E;
-            padding: 1.5rem;
-            border-radius: 1rem;
-            width: 90%;
-            max-width: 400px;
-            max-height: 80vh;
-            overflow-y: auto;
-            transform: scale(0.95);
-            transition: transform 0.3s ease-in-out;
-        }
-        .modal-overlay.visible .modal-content {
-            transform: scale(1);
-        }
         .tick-mark {
             width: 10px;
             height: 10px;
@@ -105,24 +71,42 @@
             <h1 class="text-4xl font-bold mb-4">Apex Power</h1>
             <p class="text-apex-medium mb-8">Level up your performance with science-backed pelvic floor training.</p>
             <div id="onboarding-step-1" class="">
-                <h2 class="text-2xl font-semibold mb-2">Step 1: Find Your Muscles</h2>
-                <button onclick="showStep(2)" class="bg-pink-600 text-white font-bold py-3 px-8 rounded-full w-full mt-8">Next</button>
+                <h2 class="text-2xl font-semibold mb-4">Step 1: Find Your Muscles</h2>
+                <p class="text-apex-medium mb-4">To find the right muscles, try to stop the flow of urine mid-stream. The muscles you use are your pelvic floor muscles.</p>
+                <p class="text-apex-medium mb-6">Alternatively, tighten the muscle you'd use to stop passing gas. This is a safe way to feel the contraction.</p>
+                <p class="text-amber-400 text-sm mb-8">Important: The urine-stop test is for identification only. Do not do it regularly.</p>
+                <button onclick="showStep(2)" class="bg-pink-600 text-white font-bold py-3 px-8 rounded-full w-full">Next</button>
             </div>
             <div id="onboarding-step-2" class="hidden">
-                <h2 class="text-2xl font-semibold mb-2">Step 2: The 'Squeeze & Lift'</h2>
-                <button onclick="showStep(3)" class="bg-pink-600 text-white font-bold py-3 px-8 rounded-full w-full mt-8">Next</button>
+                <h2 class="text-2xl font-semibold mb-4">Step 2: The 'Squeeze & Lift'</h2>
+                <p class="text-apex-medium mb-4">Now that you've found them, focus on the feeling. It's not just a clench, but an upward and inward "lift". Imagine you're lifting something with those muscles.</p>
+                <p class="text-apex-medium mb-8">Keep your stomach, butt, and thigh muscles relaxed. Breathe normally throughout the exercise.</p>
+                <button onclick="showStep(3)" class="bg-pink-600 text-white font-bold py-3 px-8 rounded-full w-full">Next</button>
             </div>
             <div id="onboarding-step-3" class="hidden">
-                <h2 class="text-2xl font-semibold mb-2">Step 3: Visual Check</h2>
-                <button onclick="completeOnboarding()" class="bg-green-500 text-white font-bold py-3 px-8 rounded-full w-full mt-8">Start Training</button>
+                <h2 class="text-2xl font-semibold mb-4">Step 3: Visual Check</h2>
+                <p class="text-apex-medium mb-4">For the best confirmation, stand undressed in front of a mirror. A correct squeeze will make the base of your penis pull in slightly, and your testicles will rise.</p>
+                <p class="text-sm text-apex-medium mb-8">If you're still unsure, searching for "how to do Kegels for men" on YouTube can provide helpful visual guides.</p>
+                <button onclick="completeOnboarding()" class="bg-green-500 text-white font-bold py-3 px-8 rounded-full w-full">I'm Ready, Start Training</button>
+            </div>
+        </div>
+        
+        <!-- All Levels Screen -->
+        <div id="level-select-screen" class="hidden flex-grow flex flex-col p-4">
+            <div class="flex justify-between items-center p-4">
+                <h2 class="text-2xl font-bold">All Levels</h2>
+                <button onclick="closeLevelSelect()" class="w-8 h-8 flex items-center justify-center rounded-full text-pink-500 hover:bg-pink-500 hover:text-white text-3xl font-bold transition-colors">&times;</button>
+            </div>
+            <div id="level-list" class="space-y-3 p-4">
+                <!-- Levels will be populated here -->
             </div>
         </div>
 
-        <!-- Weekly View Screen -->
-        <div id="weekly-view-screen" class="hidden flex-grow flex flex-col p-4">
+        <!-- Daily View Screen (Sub-levels) -->
+        <div id="daily-view-screen" class="hidden flex-grow flex flex-col p-4">
             <div class="flex justify-between items-center p-4">
-                <h2 id="weekly-view-title" class="text-2xl font-bold">Level 1</h2>
-                <button onclick="showMainScreen(true)" class="text-pink-500 font-semibold">All Levels</button>
+                <h2 id="daily-view-title" class="text-2xl font-bold">Level 1</h2>
+                <button onclick="showLevelSelectScreen()" class="w-8 h-8 flex items-center justify-center rounded-full text-pink-500 hover:bg-pink-500 hover:text-white text-3xl font-bold transition-colors">&times;</button>
             </div>
             <div id="daily-list" class="space-y-3 p-4">
                 <!-- Daily progress will be populated here -->
@@ -174,21 +158,10 @@
                     <svg id="play-icon" class="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path></svg>
                     <svg id="pause-icon" class="w-8 h-8 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M5.75 4.75a.75.75 0 00-1.5 0v10.5a.75.75 0 001.5 0V4.75zm8.5 0a.75.75 0 00-1.5 0v10.5a.75.75 0 001.5 0V4.75z"></path></svg>
                 </button>
-                <button onclick="showMainScreen(true)" class="btn-icon">
+                <button onclick="showLevelSelectScreen()" class="btn-icon">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
                 </button>
             </div>
-        </div>
-    </div>
-
-    <!-- Level Select Modal -->
-    <div id="level-select-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Select Level</h2>
-                <button onclick="toggleLevelSelectModal(false)" class="text-2xl">&times;</button>
-            </div>
-            <div id="level-list" class="space-y-2"></div>
         </div>
     </div>
 
@@ -215,9 +188,10 @@
 
         const DOM = {
             onboardingScreen: document.getElementById('onboarding-screen'),
-            weeklyViewScreen: document.getElementById('weekly-view-screen'),
+            levelSelectScreen: document.getElementById('level-select-screen'),
+            dailyViewScreen: document.getElementById('daily-view-screen'),
             trainingScreen: document.getElementById('training-screen'),
-            weeklyViewTitle: document.getElementById('weekly-view-title'),
+            dailyViewTitle: document.getElementById('daily-view-title'),
             dailyList: document.getElementById('daily-list'),
             levelTitle: document.getElementById('level-title'),
             levelGoal: document.getElementById('level-goal'),
@@ -233,7 +207,6 @@
             soundToggle: document.getElementById('sound-toggle'),
             soundOnIcon: document.getElementById('sound-on-icon'),
             soundOffIcon: document.getElementById('sound-off-icon'),
-            levelSelectModal: document.getElementById('level-select-modal'),
             levelList: document.getElementById('level-list'),
         };
 
@@ -242,7 +215,6 @@
         DOM.progressRing.style.strokeDasharray = `${ringCircumference} ${ringCircumference}`;
 
         const trainingPlan = [
-            // Data mapped from research file
             { level: 1, goal: "Activation & Control", hold: 3, rest: 5, reps: 5, sets: 3 },
             { level: 2, goal: "Building Endurance", hold: 5, rest: 5, reps: 8, sets: 3 },
             { level: 3, goal: "Increasing Volume", hold: 5, rest: 5, reps: 10, sets: 3 },
@@ -260,7 +232,7 @@
         let state = {};
         let transientState = {};
 
-        const storageKey = 'apexPowerGameState_v3';
+        const storageKey = 'apexPowerGameState_v4';
 
         function initializeState() {
             state = {
@@ -317,27 +289,41 @@
         function completeOnboarding() {
             state.onboardingComplete = true;
             saveState();
-            startSet(0, 0); // Directly start Level 1, Day 1, Set 1
+            startSet(0, 0);
         }
 
-        function showMainScreen(openModal = false) {
-            DOM.onboardingScreen.classList.add('hidden');
-            DOM.trainingScreen.classList.add('hidden');
-            DOM.weeklyViewScreen.classList.remove('hidden');
-            transientState.currentScreen = 'weekly';
-            
+        function showScreen(screenId) {
+            transientState.currentScreen = screenId;
+            Object.values(DOM).forEach(el => {
+                if (el.id && el.id.endsWith('-screen')) {
+                    el.classList.add('hidden');
+                }
+            });
+            DOM[screenId].classList.remove('hidden');
+        }
+
+        function showLevelSelectScreen() {
+            showScreen('levelSelectScreen');
+            populateLevelSelector();
+        }
+        
+        function closeLevelSelect() {
+            // This function is for the 'X' on the All Levels screen.
+            // It returns to the daily view of the first unfinished level, which acts as the "home" screen.
             const { levelIndex } = findFirstUnfinishedDay();
-            populateWeeklyView(levelIndex);
-            if (openModal) {
-                toggleLevelSelectModal(true);
-            }
+            showDailyViewScreen(levelIndex);
         }
 
-        function populateWeeklyView(levelIndex) {
+        function showDailyViewScreen(levelIndex) {
+            showScreen('dailyViewScreen');
+            populateDailyView(levelIndex);
+        }
+
+        function populateDailyView(levelIndex) {
             transientState.levelIndex = levelIndex;
             const levelData = trainingPlan[levelIndex];
             const levelProgress = state.progress[levelIndex];
-            DOM.weeklyViewTitle.textContent = `Level ${levelData.level}`;
+            DOM.dailyViewTitle.textContent = `Level ${levelData.level}`;
             DOM.dailyList.innerHTML = '';
 
             levelProgress.days.forEach((day, dayIndex) => {
@@ -379,10 +365,7 @@
                 totalPausedDuration: 0,
             };
 
-            DOM.onboardingScreen.classList.add('hidden');
-            DOM.weeklyViewScreen.classList.add('hidden');
-            DOM.trainingScreen.classList.remove('hidden');
-            transientState.currentScreen = 'training';
+            showScreen('trainingScreen');
 
             const levelData = trainingPlan[levelIndex];
             DOM.levelTitle.textContent = `Level ${levelData.level}`;
@@ -400,11 +383,7 @@
         function endSet() {
             state.progress[transientState.levelIndex].days[transientState.dayIndex].sets[transientState.setIndex] = true;
             saveState();
-            
-            DOM.trainingScreen.classList.add('hidden');
-            DOM.weeklyViewScreen.classList.remove('hidden');
-            transientState.currentScreen = 'weekly';
-            populateWeeklyView(transientState.levelIndex);
+            showDailyViewScreen(transientState.levelIndex);
         }
 
         function togglePausePlay() {
@@ -446,14 +425,12 @@
         }
 
         function animationLoop(timestamp) {
-            // Phase progress (for ring)
             const phaseElapsedTime = timestamp - transientState.phaseStartTime;
             const phaseProgress = Math.min(phaseElapsedTime / transientState.phaseDuration, 1);
             const remainingSeconds = Math.ceil((transientState.phaseDuration - phaseElapsedTime) / 1000);
             DOM.countdownTimer.textContent = remainingSeconds > 0 ? remainingSeconds : 0;
             setRingProgress(phaseProgress, transientState.isSqueezing ? 'green' : 'pink');
 
-            // Overall set progress (for top bar)
             const levelData = trainingPlan[transientState.levelIndex];
             const totalSetDurationMs = levelData.reps * (levelData.hold + levelData.rest) * 1000;
             if (transientState.setStartTime > 0) {
@@ -503,15 +480,6 @@
             }
         }
         
-        function toggleLevelSelectModal(show) {
-            if (show) {
-                populateLevelSelector();
-                DOM.levelSelectModal.classList.add('visible');
-            } else {
-                DOM.levelSelectModal.classList.remove('visible');
-            }
-        }
-
         function populateLevelSelector() {
             DOM.levelList.innerHTML = '';
             trainingPlan.forEach((level, index) => {
@@ -532,8 +500,7 @@
                 `;
                 
                 levelItem.onclick = () => {
-                    toggleLevelSelectModal(false);
-                    populateWeeklyView(index);
+                    showDailyViewScreen(index);
                 };
                 DOM.levelList.appendChild(levelItem);
             });
@@ -568,9 +535,10 @@
             DOM.soundOffIcon.classList.toggle('hidden', state.soundEnabled);
 
             if (state.onboardingComplete) {
-                showMainScreen();
+                const { levelIndex } = findFirstUnfinishedDay();
+                showDailyViewScreen(levelIndex);
             } else {
-                DOM.onboardingScreen.classList.remove('hidden');
+                showScreen('onboardingScreen');
             }
         };
     </script>
