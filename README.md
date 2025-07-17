@@ -29,7 +29,7 @@ The time interval training methodology used in this application is informed by t
 
 ## How to Use
 
-1.  Navigate to the live app on GitHub Pages: [https://nexusstreamon.github.io/kegel-apex-power-app/).
+1.  Navigate to the live app on GitHub Pages: [Apex Power](https://nexusstreamon.github.io/kegel-apex-power-app/)
 2.  Start with Level 1 of the program.
 3.  Follow the on-screen instructions and the timer for each exercise interval.
 4.  Track your progress as you move through the weeks.
