@@ -12,8 +12,9 @@ Please Note - Kegel exercise are not for everyone. Kindly refer to your doctors 
 The interface is pretty simple and intuitive. 
 
 After the onboarding. You are presented with the app interface. 
-Only thing you need to click is Start/Pause Button. 
-There is a STAR Button on the Bottom Right. Click on it to Access Any Game Level. 
+Only thing you need to click is 
+**Start/Pause Button** in the middle. 
+**STAR Button** on the Bottom Right. Click on it to **Access Any Game Level**. 
 
 ## Key Features
 
@@ -37,7 +38,8 @@ The time interval training methodology used in this application is informed by t
 
 ## Contributing
 
-If you'd like to contribute to this project, kindly make onboarding pages and app navigation using UX UI implementations. 
+If you'd like to contribute to this project, kindly keep it free for everyone with open source content. 
+You can add additional training programs and such and create a leveling system. 
 
 ## License
 
@@ -50,11 +52,11 @@ I used AI to gather the data from both ChatGPT and Gemini in tandem. The entire 
 ## Motivation and Final Thoughts
 
 This repo is just made for hosting the app on github pages. 
-I saw the lack of Free Kegal Exercise Apps or Online Free resources. Apps available in ios and google playstore are monitized - For a basic timer and tracking, It does not need to be complicated or cost anything to access such health resources. 
+I saw the lack of truly **Free Kegal Exercise Apps** or Online Free resources. Apps available in ios and google playstore are monitized - For a basic timer and tracking, It should not cost anything to access such health resources. 
 
 ---
 
 ## Known Bugs
 
-- There are many, inlcuding progress bar not moving when you move away from the tab. 
-- Progress tracking is not seamless and user needs to click on the level and day.
+- There are many, inlcuding progress bar not moving when you move away from the tab. That is because the app uses the screen frames to estimate the progress of the bar. 
+- Progress tracking is not seamless experience and user needs to click on **STAR Button**  and then the level and day number.
