@@ -309,8 +309,9 @@
         
         function closeLevelSelect() {
             // This function is for the 'X' on the All Levels screen.
-            // It returns to the daily view of the level the user was just on, breaking the loop.
-            showDailyViewScreen(transientState.levelIndex);
+            // It exits the menu and goes to the next available training session.
+            const { levelIndex, dayIndex } = findFirstUnfinishedDay();
+            startSet(levelIndex, dayIndex);
         }
 
         function showDailyViewScreen(levelIndex) {
