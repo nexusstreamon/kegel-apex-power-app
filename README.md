@@ -15,35 +15,31 @@ Its a simple application that stores the information in ~localstorage of modern 
 
 ## Research Basis
 
-The time interval training methodology used in this application is informed by thorough online research on effective Kegel exercise techniques. The data supporting this research is available for review in an Excel sheet located in the `data` directory (or `research` directory, adjust if different) of this repository: [`/data/research_data.xlsx`](./data/research_data.xlsx) (or adjust path accordingly).
+The time interval training methodology used in this application is informed by thorough online research on effective Kegel exercise techniques. The data supporting this research is available for review in an Excel sheet located in the `main` directory of this repository: [research_data.xlsx).
 
 ## How to Use
 
-1.  Navigate to the live app on GitHub Pages: [YOUR_GITHUB_PAGES_LINK_HERE](YOUR_GITHUB_PAGES_LINK_HERE).
-2.  Start with Week 1 of the program.
+1.  Navigate to the live app on GitHub Pages: [https://github.com/nexusstreamon).
+2.  Start with Level 1 of the program.
 3.  Follow the on-screen instructions and the timer for each exercise interval.
 4.  Track your progress as you move through the weeks.
 5.  Stay consistent with the program for the best results!
 
 ## Contributing
 
-If you'd like to contribute to this project, please follow these guidelines:
-
-1.  Fork the repository.
-2.  Create a new branch for your feature or bug fix.
-3.  Make your changes and commit them.
-4.  Push your changes to your fork.
-5.  Submit a pull request.
+If you'd like to contribute to this project, kindly make onboarding pages and app navigation using UX UI implementations. 
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE) - see the [LICENSE](LICENSE) file for details. ## Acknowledgements
+This project is licensed under the [GNU GPLv3](LICENSE) file for details. 
 
-* Thank you to the online resources and research that informed the development of this application and its training program.
+## Acknowledgements
 
-## Contact
+* I used AI to gather the data from both ChatGPT and Gemini in tandem. The entire app was made using Canvas option availbale in Google Gemini 2.5 Pro. 
 
-[Your Name/Username] - [Your Email (Optional)] - [Your GitHub Profile URL]
+## Motivation and Final Thoughts
+
+This repo is just made for hosting the app on github pages. I saw the lack of Kegal Exercises available online for free. Apps available in ios and google playstore are monitizedfor a basic timer and tracking. It does not need to be complicated or cost anything to access such health health resources. 
 
 ---
 
