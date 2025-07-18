@@ -57,5 +57,6 @@ I saw the lack of truly **Free Kegal Exercise Apps** or Online Free resources. A
 
 ## Known Bugs
 
+- The menu can get stuck in a loop between All Levels Screen and Daily Screen. I do not know the flow logic to fix this. I have tried different things. But needs a rewrite. 
 - There are many, inlcuding progress bar not moving when you move away from the tab. That is because the app uses the screen frames to estimate the progress of the bar. 
 - Progress tracking is not seamless experience and user needs to click on **STAR Button**  and then the level and day number.
